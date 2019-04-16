@@ -16,3 +16,9 @@ function getIndicesOf(searchStr, str, caseSensitive) {
     }
     return indices;
 }
+
+const indent = (_str) => {
+    str = _str.split("\n");
+    str = str.map((x) => "    " + x);
+    return str.join("\n");
+}
