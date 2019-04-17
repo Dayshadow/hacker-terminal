@@ -5,10 +5,18 @@ let h = window.innerHeight;
 c.width = w;
 c.height = h;
 
+let tc = new TextConsole(0, 0, w/2, h/2);
 
+let f = 0;
 const loop = () => {
-    ctx.clearRect(0, 0, w, h);
-    //console.log(generateLine(genData.varArr));
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, w, h);
+    f++;
+    if (f % 16 == 0) {
+        tc.addCode();
+    }
+    tc.draw();
+    tc.update();
     requestAnimationFrame(loop);
 }
 loop();

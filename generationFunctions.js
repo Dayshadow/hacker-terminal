@@ -3,9 +3,10 @@ const genData = {
     conditionArr: ["Boolean(false + true + true - false)", "!false", "(true && true)", "(false || true)", "1", "('f' + 'a' + 'l' + 's' + 'e')", "Boolean(1)", "(1 / 2 + 1 / 2)", "(2 - 1)", "(0 + 1)", "(4>>2)", "Number(true)", "3 ** (4 + true) - 243", "Math.pow(true, false) - 1", "(Math.pow(5 + 5, 3) + Math.pow(9, 3) - Math.pow(6 + 6, 3) - Math.pow(1, 3))", "(32768 - 32768)", "(0 + 0)", "Number(false)"],
     varArr: ["foo", "bar", "tmp", "operand", "counter", "i", "j", "k", "index", "idNumber", "_FSXlmp", "wsCross", "dotProduct", "res", "product", "dx", "dy", "x", "y", "adasba", "_fsDONE", "wNcEG", "argLength", "tmpFieldDx", "cInt", "functionCount", "varCount"],
     funcNameArr: ["doStuff", "runCheck", "handleData", "update", "findFirst", "hack", "bruteForce", "changeVars", "handle", "addComplexity", "manipulateVerticies", "recurse", "permutate", "alter", "runCalculations", "calculate"],
-    lineTemplates: ["/v = typeof /v;", "/v = /f;", "/v = /f * /v + /f;", "/v = () => {return /v * 2};", "/v = 69", "/f.replace('/e/g', String(/v));"]
+    lineTemplates: ["/v = typeof /v;", "/v = /f;", "/v = /f * /v + /f;", "/v = () => {return /v * 2};", "/v = /v", "/f.replace('/e/g', String(/v));"]
 }
 
+const tab = "        "
 
 
 const generateFunctionCall = (vars) => {
@@ -16,12 +17,14 @@ const generateFunctionCall = (vars) => {
 
     for (let i = 0; i < argAmount; i++) {
         let randArg = randomItem(varArr);
-        varArr = varArr.filter((elt) => { return elt !== randArg }); // Removes the chosen argument name to prevent duplicates
-        args += randArg;
-        argArr = argArr.concat(randArg);
-        if (i !== argAmount - 1) args += ", ";
+            varArr = varArr.filter((elt) => { return elt !== randArg }); // Removes the chosen argument name to prevent duplicates
+            if (randArg && varArr.length > 0) {
+            args += randArg;
+            argArr = argArr.concat(randArg);
+            args += ", ";
+        }
     }
-
+    args = args.replace(/, $/g, "");
     return { text: randomItem(genData.funcNameArr) + "(" + args + ")", args: argArr };
 }
 
@@ -45,8 +48,11 @@ const generateLine = (vars) => {
 const generateIfStatement = (vars) => {
     let ret = "";
     ret += "if (" + randomItem(genData.conditionArr) + ") {" + "\n";
-    for (let i = 0; i < Math.random()*3; i++) {
-        ret += "    " + generateLine(vars) + "\n";
+    for (let i = 0; i < Math.random() * 3; i++) {
+        if (Math.random() > 0.7) {
+            ret += indent(generateIfStatement(vars)) + "\n";
+        }
+        ret += tab + generateLine(vars) + "\n";
     }
     return ret + "}";
 }
@@ -59,6 +65,6 @@ const generateFunction = () => {
     for (let i = 0; i < Math.random() * 20; i++) {
         ret += indent(randomItem(generators)(funcData.args)) + "\n";
     }
-    ret += "    return " + randomItem(funcData.args) + ";" + "\n";
-    return ret + "}"
+    ret += tab + "return " + randomItem(funcData.args) + ";" + "\n";
+    return ret + "}" + "\n";
 }
